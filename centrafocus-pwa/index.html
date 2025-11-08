@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#007bff" />
+  <title>CentraFocus Profit Calculator</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;margin:0}
+    html,body{height:100%}
+    body{display:flex;align-items:center;justify-content:center;background:#f7f9fc}
+    /* Splash screen */
+    #splash{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#fff;z-index:9999;transition:opacity .6s ease;flex-direction:column}
+    #splash img{width:220px;max-width:60vw;animation:logoZoom 1.6s ease forwards}
+    @keyframes logoZoom{0%{transform:scale(.6);opacity:0}50%{transform:scale(1.05);opacity:1}100%{transform:scale(1);opacity:1}}
+    /* app */
+    .app{width:100%;max-width:480px;margin:0 16px;display:none;z-index:1}
+    .card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 10px 30px rgba(0,0,0,.12);text-align:center}
+    .mini-logo{width:72px;margin:0 auto 8px;display:block}
+    h1{color:#0056b3;font-size:20px;margin:0 0 18px;font-weight:700}
+    label{display:block;text-align:left;font-weight:600;margin-top:10px;color:#222;font-size:13px}
+    input{width:100%;padding:12px;border:1px solid #d9d9d9;border-radius:10px;margin-top:6px;font-size:15px}
+    input::placeholder{color:#888}
+    button{margin-top:18px;width:100%;padding:12px;border-radius:10px;border:0;background:linear-gradient(90deg,#0056b3,#007bff);color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+    .result{margin-top:16px;font-weight:700;color:#0b2f4a}
+    footer{font-size:12px;color:#888;text-align:center;margin-top:14px}
+    @media (max-width:420px){.card{padding:20px}h1{font-size:18px}}
+  </style>
+</head>
+<body>
+  <div id="splash" aria-hidden="false">
+    <img src="assets/centrafocus.png" alt="CentraFocus" />
+  </div>
+
+  <main class="app" id="app" aria-hidden="true">
+    <section class="card" role="application" aria-label="CentraFocus Percentage Calculator">
+      <img class="mini-logo" src="assets/centrafocus.png" alt="CentraFocus logo">
+      <h1>Profit Percentage Calculator</h1>
+
+      <label for="amount">Amount</label>
+      <input id="amount" type="number" inputmode="decimal" placeholder="Enter Total Amount" aria-label="Amount">
+
+      <label for="profit">Profit</label>
+      <input id="profit" type="number" inputmode="decimal" placeholder="Enter Profit Value" aria-label="Profit">
+
+      <button id="calc">Calculate</button>
+      <div id="result" class="result" aria-live="polite"></div>
+      <footer>© 2025 CentraFocus</footer>
+    </section>
+  </main>
+
+  <script>
+    // Splash duration 3 seconds
+    window.addEventListener('load', ()=>{
+      const splash = document.getElementById('splash');
+      const app = document.getElementById('app');
+      setTimeout(()=>{
+        splash.style.opacity='0';
+        splash.setAttribute('aria-hidden','true');
+        setTimeout(()=>{ splash.style.display='none'; app.style.display='block'; app.setAttribute('aria-hidden','false'); }, 600);
+      }, 3000);
+    });
+
+    // Calculator logic
+    document.getElementById('calc').addEventListener('click', ()=>{
+      const a = parseFloat(document.getElementById('amount').value);
+      const b = parseFloat(document.getElementById('profit').value);
+      const r = document.getElementById('result');
+      if(isNaN(a) || isNaN(b) || a===0){ r.textContent='Please enter valid numbers (Amount cannot be 0).'; r.style.color='red'; return; }
+      const pct = (b / a) * 100;
+      r.style.color='#0b2f4a';
+      r.textContent = `Profit Percentage: ${pct.toFixed(2)}%`;
+    });
+
+    // Register service worker
+    if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-worker.js').catch(()=>{}); }
+  </script>
+</body>
+</html>
